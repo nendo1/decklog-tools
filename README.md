@@ -6,3 +6,5 @@ Works by adding a txt file with all decklog codes in the target folder, one deck
 It'll output txt files for each deck with card quantity, card code and card name per line.
 
 Python dependencies are playwright and beautifulsoup4
+
+python decklog_ripper.py
