@@ -12,13 +12,12 @@ def main():
     URLS = [base_URL+x for x in decklogs]
     decklists = []
 
-    for url in URLS:
+    for i, url in enumerate(URLS):
         total = len(URLS)
-        for i in range(len(URLS)):
-            print(f"\rProgress: {i}/{total}", end="", flush=True)
-            html = asyncio.run(ripdeck(url))
-            decklists.append(html2deck(html))
-            print(f"\rProgress: {i+1}/{total}", end="", flush=True)
+        print(f"\rProgress: {i}/{total}", end="", flush=True)
+        html = asyncio.run(ripdeck(url))
+        decklists.append(html2deck(html))
+        print(f"\rProgress: {i+1}/{total}", end="", flush=True)
 
     print_decklists(decklists, decklogs)
 
