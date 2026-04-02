@@ -8,4 +8,14 @@ Will output txt files for each deck with card quantity, card code and card name 
 
 Python dependencies are playwright and beautifulsoup4
 
+```
 python decklog_ripper.py
+```
+
+# Deck Aggregator 
+
+Takes multiple lists created by decklog ripper and averages them
+
+```
+python deck_aggregator.py <folder path> <desired name>
+```
