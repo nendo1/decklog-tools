@@ -33,8 +33,8 @@ def create_agg_list(quantity, cardcodes, cardnames):
         agg_list.append(line)
     return agg_list
 
-def print_to_file(list):
-    with open(base_path_save+"result.txt", 'w', encoding="utf-8") as f:
+def print_to_file(list,name):
+    with open(base_path_save+name+".txt", 'w', encoding="utf-8") as f:
         for cardLine in list:
             card = cardLine.split(" ")
             f.write(card[0])
@@ -61,18 +61,9 @@ def main():
     quantity = list(c.values())
     average_quantity = [round(x/deckcounts,2) for x in quantity]
     final_list = create_agg_list(average_quantity,cards,cardname_dict)
-    file_path = print_to_file(final_list)
+    name = sys.argv[2] if len(sys.argv) > 2 else cards[0].split("/")[0]
+    file_path = print_to_file(final_list, name)
     print("Success!")
     print("File can be found in: "+file_path)
 
 main()
-
-
-
-
-
-
-        
-
-
-
