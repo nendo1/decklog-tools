@@ -1,29 +1,41 @@
 import asyncio
 from playwright.async_api import async_playwright
 from bs4 import BeautifulSoup
+from pathlib import Path
+import sys
+import os
 
 base_URL = 'https://decklog-en.bushiroad.com/view/'
 base_logs_path = './target/decklogs.txt'
 base_save_path = './lists/'
 
 def main():
-    decklogs = readlogs()
-    print("Retrieving decklists: "+str(len(decklogs)))
-    URLS = [base_URL+x for x in decklogs]
-    decklists = []
+    path = sys.argv[1] if len(sys.argv) > 1 else base_logs_path
+    if "./" not in path:
+        os.makedirs(path, exist_ok=True)
+        path = "./" + path
 
-    for i, url in enumerate(URLS):
-        total = len(URLS)
-        print(f"\rProgress: {i}/{total}", end="", flush=True)
-        html = asyncio.run(ripdeck(url))
-        decklists.append(html2deck(html))
-        print(f"\rProgress: {i+1}/{total}", end="", flush=True)
+    folder = Path(path)
+    for file in folder.iterdir():
+        if file.is_file() and file.suffix == ".txt":
+            print("Found Deck Type: "+Path(file).stem)
+            decklogs = readlogs(file)
+            print("Retrieving decklists: "+str(len(decklogs)))
+            URLS = [base_URL+x for x in decklogs]
+            decklists = []
 
-    print_decklists(decklists, decklogs)
+            for i, url in enumerate(URLS):
+                total = len(URLS)
+                print(f"\rProgress: {i}/{total}", end="", flush=True)
+                html = asyncio.run(ripdeck(url))
+                decklists.append(html2deck(html))
+                print(f"\rProgress: {i+1}/{total}", end="", flush=True)
 
-def readlogs():
+            print_decklists(decklists, decklogs, Path(file).stem)
+
+def readlogs(path):
     logs_from_txt = []
-    with open(base_logs_path, 'r') as f:
+    with open(path, 'r') as f:
         for line in f:
             logs_from_txt.append(line.strip())
     return logs_from_txt
@@ -50,9 +62,10 @@ def html2deck(html):
         deck_transcribed.append([card_quantity, card_code, card_name])
     return deck_transcribed
 
-def print_decklists(decklists, decklogs):
+def print_decklists(decklists, decklogs, folder_name):
+    os.makedirs(base_save_path+folder_name, exist_ok=True)
     for i, list in enumerate(decklists):
-        with open(base_save_path+decklogs[i]+".txt", 'w', encoding="utf-8") as f:
+        with open(base_save_path+folder_name+"/"+decklogs[i]+".txt", 'w', encoding="utf-8") as f:
             f.write(decklogs[i])
             f.write("\n")
             for card in list:
